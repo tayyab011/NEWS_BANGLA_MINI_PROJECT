@@ -1,5 +1,59 @@
 const categoryContainer = document.getElementById("categoryContainer");
+const newsContainer = document.getElementById("newsContainer");
+const bookMarkContainer = document.getElementById("bookMarkContainer");
+const bookmarkCount = document.getElementById("bookmarkCount")
+let bm=[]
+newsContainer.addEventListener("click", (e) => {
+ /*  console.log(e.target.parentNode.parentNode.childNodes[3].innerHTML); */
+  if (e.target.innerText === "bookmark") {
+   /*  console.log("bookmark clicked"); */
+    const title = e.target.parentNode.parentNode.childNodes[3].innerHTML;
+    const id = e.target.parentNode.parentNode.childNodes[3].id;
+  
+    const exists = bm.find((item) => item.id === id);
+   if (!exists) {
+     bm.push({
+       title: title,
+       id: id,
+     });
+     historyBookMark(bm);
+   }else{
+    alert("already bookmarked")
+   }
+  }
+});
 
+
+//4 history bookmark
+
+let a=0;
+function historyBookMark(e) {
+  
+    
+bookMarkContainer.innerHTML=""
+
+     e.forEach((e) => {
+       bookMarkContainer.innerHTML += `
+    <div>
+    <p>${e.title}</p>
+    <button onclick="handleDeletebookmark('${e.id}')" class="historyDelete">delete</button>
+    </div>
+    `;
+     });
+
+bookmarkCount.innerText = bm.length;
+
+} 
+
+const handleDeletebookmark =(id)=>{
+/*     console.log(id)  */
+const filteredarray =bm.filter((e) => e.id !== id);
+
+bm = filteredarray;
+ historyBookMark(filteredarray); 
+
+
+}
 //1
 const loadCategories = async()=>{
     try {
@@ -42,7 +96,8 @@ document.getElementById("my_modal_5").showModal();
 
 //2
 const loadCardNews =(id)=>{
-    console.log(id)
+   
+
     fetch(`https://news-api-fs.vercel.app/api/categories/${id}`)
       .then((res) => res.json())
       .then((data) => showCardNews(data.articles));
@@ -61,18 +116,18 @@ const loadCardNews =(id)=>{
 
 //2 show card news
 const showCardNews =(news)=>{
-    console.log(news)
+   
   const newsContainer =  document.getElementById("newsContainer");
   newsContainer.innerHTML=""
  news.map((e)=>{
    newsContainer.innerHTML += `
     <div class="card bg-info h-96">
 <img src="${e.image.srcset[8].url}" alt="">
-<p>${e.title}</p>
+<p id="${e.id}" >${e.title}</p>
 <h6>${e.time}</h6>
 <div class="flex justify-between">
-   <button class="btn btn-info">bookmark</button>
-   <button onclick="loadNewsDetail('${e.id}')" class="btn btn-danger">view details</button>
+   <button class="btn btn-info ">bookmark</button>
+   <button onclick="loadNewsDetail('${e.id}')"  class="btn btn-danger">view details</button>
 </div>
 
    </div>
